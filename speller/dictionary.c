@@ -127,12 +127,31 @@ bool load(const char *dictionary)
     return true;
 }
 
+unsigned int wordCount(struct node *crawl)
+{
+    int count = 0;
+    if (crawl->is_word)
+    {
+        count ++;
+    }
+    
+    for (int i = 0; i < N; i++)
+    {
+        if (crawl->children[i])
+        {
+            count += wordCount(crawl->children[i]);
+        }
+    }
+
+    return count;
+}
+
 // Returns number of words in dictionary if loaded else 0 if not yet loaded
 unsigned int size(void)
 {
-   // just to test
-   unsigned int test = 100;
-   return test;
+    unsigned int words = 0;
+    words += wordCount(root);
+    return words;
 }
 
 // Returns true if word is in dictionary else false
@@ -162,8 +181,22 @@ bool check(const char *word)
 }
 
 // Unloads dictionary from memory, returning true if successful else false
+void free_node(struct node *crawl)
+{
+    if (!crawl)
+    {
+        return;
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        free_node(crawl->children[i]);
+    }
+
+    free(crawl);
+}
 bool unload(void)
 {
-    // just to test
-    return true;
+    free_node(root);    
+    return 1;
 }
