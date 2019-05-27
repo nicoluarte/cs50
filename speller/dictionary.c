@@ -28,7 +28,7 @@ node *root;
 struct node* getNewNode() // gets no input
 {
         struct node *getNewNode = NULL;
-        getNewNode = (struct node *)malloc(sizeof(struct node));
+        getNewNode = (struct node *)calloc(1, sizeof(struct node));
         if (getNewNode)
         {
             getNewNode->is_word = false;
@@ -53,7 +53,7 @@ void insert (struct node *top, const char *key)
         // index is the trie depth
         int index;
         // crawl is a node used to traverse the trie
-        struct node *crawl = root;
+        // struct node *crawl = root;
         for (int level = 0; level < length; level++)
         {
             // getting the index of the ith char
@@ -65,34 +65,29 @@ void insert (struct node *top, const char *key)
             }
             // if children[index] is NULL the create new new node
             // at that index
-            if (!crawl->children[index])
+            if (!top->children[index])
             {
-                crawl->children[index] = getNewNode();
+                top->children[index] = getNewNode();
             }
             // after creating the node move to the next one
             // by getting the pointer to crawl
-            crawl = crawl->children[index];
+            top = top->children[index];
         }
         // after all characters are done
         // set the deepest node to a leaf
-        crawl->is_word = true;
+        top->is_word = true;
     }
 
 // Loads dictionary into memory, returning true if successful else false
 bool load(const char *dictionary)
 {
     // Initialize trie
-    root = malloc(sizeof(node));
-    if (root == NULL)
-    {
-        return false;
-    }
-    root->is_word = false;
-    // set all children to NULL
-    for (int i = 0; i < N; i++)
-    {
-        root->children[i] = NULL;
-    }
+    root = calloc(1, sizeof(node));
+    //// set all children to NULL
+    //for (int i = 0; i < N; i++)
+    //{
+    //    root->children[i] = NULL;
+    //}
 
     // Open dictionary
     FILE *file = fopen(dictionary, "r");
